@@ -1,0 +1,468 @@
+/* ============================================================
+|  xushi.css - XushiUI Design System
+|  1. TOKENS
+|  2. STRUCTURE
+|  3. ANIMATIONS
+============================================================ */
+
+/* ============================================================
+|  SECTION 1 - TOKENS
+============================================================ */
+
+:root {
+    --xushi-color-white: oklch(100% 0.00011 271.152);
+    --xushi-radius-box: 10px;
+    --xushi-radius-field: 10px;
+    --xushi-radius-selector: 4px;
+    --xushi-border-box: 1px;
+    --xushi-border-field: 1px;
+    --xushi-border-selector: 2px;
+    --xushi-size-field: 40px;
+    --xushi-size-selector: 20px;
+    --xushi-shadow: 0 8px 10px rgba(0, 0, 0, 0.08);
+    --xushi-gap-button: 0.5rem;
+    --xushi-padding-header: 0 1rem;
+    --xushi-gap-header: 0;
+    --sidebar-expanded-w: 260px;
+    --sidebar-collapsed-w: 52px;
+    --header-h: 50px;
+    --layout-transition: 200ms ease-in-out;
+    --xushi-z-mobile-backdrop: 1005;
+    --xushi-z-mobile-toggle: 1015;
+    --xushi-z-overlay-backdrop: 1000;
+    --xushi-z-drawer: 1010; 
+    --xushi-z-modal: 1020;
+    --xushi-z-dropdown: 1030;
+    --xushi-z-popover: 1040;
+    --xushi-z-tooltip: 1050;
+    --xushi-z-toast: 1060;
+    --xushi-z-shell-base:     2;
+    --xushi-z-shell-elevated: 3;
+
+    /* ── Semantic Colors ── */
+    --xushi-color-danger:           oklch(63% 0.32 25);
+    --xushi-color-danger-content:   oklch(98% 0.02 25);
+
+    --xushi-color-success:          oklch(75% 0.30 145);
+    --xushi-color-success-content:  oklch(12% 0.04 145);
+
+    --xushi-color-warning:          oklch(88% 0.27 95);
+    --xushi-color-warning-content:  oklch(15% 0.04 95);
+
+    --xushi-color-info:             oklch(70% 0.32 230);
+    --xushi-color-info-content:     oklch(98% 0.02 230);
+
+    /* ── Header ── */
+    --xushi-custom-header:          var(--xushi-color-header);
+    --xushi-custom-header-item-bg:  var(--xushi-color-base-neutral);
+
+    /* ── Sidebar ── */
+    --xushi-custom-sidebar:         var(--xushi-color-sidebar);
+    --xushi-custom-sidebar-item-bg: var(--xushi-color-sidebar);
+
+    /* ── Red ── hue 25 */
+    --xushi-color-red-50:  oklch(85% 0.199 25.331);
+    --xushi-color-red-100: oklch(75% 0.199 25.331);
+    --xushi-color-red-200: oklch(68% 0.199 25.331);
+    --xushi-color-red-300: oklch(61% 0.199 25.331);
+    --xushi-color-red-400: oklch(54% 0.199 25.331);
+    --xushi-color-red-500: oklch(47% 0.199 25.331);
+    --xushi-color-red-600: oklch(40% 0.199 25.331);
+    --xushi-color-red-700: oklch(33% 0.199 25.331);
+    --xushi-color-red-800: oklch(26% 0.199 25.331);
+    --xushi-color-red-900: oklch(19% 0.199 25.331);
+    --xushi-color-red-950: oklch(13% 0.199 25.331);
+
+    /* ── Orange ── hue 55 */
+    --xushi-color-orange-50:  oklch(85% 0.199 55);
+    --xushi-color-orange-100: oklch(75% 0.199 55);
+    --xushi-color-orange-200: oklch(68% 0.199 55);
+    --xushi-color-orange-300: oklch(61% 0.199 55);
+    --xushi-color-orange-400: oklch(54% 0.199 55);
+    --xushi-color-orange-500: oklch(47% 0.199 55);
+    --xushi-color-orange-600: oklch(40% 0.199 55);
+    --xushi-color-orange-700: oklch(33% 0.199 55);
+    --xushi-color-orange-800: oklch(26% 0.199 55);
+    --xushi-color-orange-900: oklch(19% 0.199 55);
+    --xushi-color-orange-950: oklch(13% 0.199 55);
+
+    /* ── Amber ── hue 75 */
+    --xushi-color-amber-50:  oklch(85% 0.199 75);
+    --xushi-color-amber-100: oklch(75% 0.199 75);
+    --xushi-color-amber-200: oklch(68% 0.199 75);
+    --xushi-color-amber-300: oklch(61% 0.199 75);
+    --xushi-color-amber-400: oklch(54% 0.199 75);
+    --xushi-color-amber-500: oklch(47% 0.199 75);
+    --xushi-color-amber-600: oklch(40% 0.199 75);
+    --xushi-color-amber-700: oklch(33% 0.199 75);
+    --xushi-color-amber-800: oklch(26% 0.199 75);
+    --xushi-color-amber-900: oklch(19% 0.199 75);
+    --xushi-color-amber-950: oklch(13% 0.199 75);
+
+    /* ── Yellow ── hue 95 */
+    --xushi-color-yellow-50:  oklch(85% 0.199 95);
+    --xushi-color-yellow-100: oklch(75% 0.199 95);
+    --xushi-color-yellow-200: oklch(68% 0.199 95);
+    --xushi-color-yellow-300: oklch(61% 0.199 95);
+    --xushi-color-yellow-400: oklch(54% 0.199 95);
+    --xushi-color-yellow-500: oklch(47% 0.199 95);
+    --xushi-color-yellow-600: oklch(40% 0.199 95);
+    --xushi-color-yellow-700: oklch(33% 0.199 95);
+    --xushi-color-yellow-800: oklch(26% 0.199 95);
+    --xushi-color-yellow-900: oklch(19% 0.199 95);
+    --xushi-color-yellow-950: oklch(13% 0.199 95);
+
+    /* ── Lime ── hue 120 */
+    --xushi-color-lime-50:  oklch(85% 0.199 120);
+    --xushi-color-lime-100: oklch(75% 0.199 120);
+    --xushi-color-lime-200: oklch(68% 0.199 120);
+    --xushi-color-lime-300: oklch(61% 0.199 120);
+    --xushi-color-lime-400: oklch(54% 0.199 120);
+    --xushi-color-lime-500: oklch(47% 0.199 120);
+    --xushi-color-lime-600: oklch(40% 0.199 120);
+    --xushi-color-lime-700: oklch(33% 0.199 120);
+    --xushi-color-lime-800: oklch(26% 0.199 120);
+    --xushi-color-lime-900: oklch(19% 0.199 120);
+    --xushi-color-lime-950: oklch(13% 0.199 120);
+
+    /* ── Green ── hue 145 */
+    --xushi-color-green-50:  oklch(85% 0.199 145);
+    --xushi-color-green-100: oklch(75% 0.199 145);
+    --xushi-color-green-200: oklch(68% 0.199 145);
+    --xushi-color-green-300: oklch(61% 0.199 145);
+    --xushi-color-green-400: oklch(54% 0.199 145);
+    --xushi-color-green-500: oklch(47% 0.199 145);
+    --xushi-color-green-600: oklch(40% 0.199 145);
+    --xushi-color-green-700: oklch(33% 0.199 145);
+    --xushi-color-green-800: oklch(26% 0.199 145);
+    --xushi-color-green-900: oklch(19% 0.199 145);
+    --xushi-color-green-950: oklch(13% 0.199 145);
+
+    /* ── Teal ── hue 175 */
+    --xushi-color-teal-50:  oklch(85% 0.199 175);
+    --xushi-color-teal-100: oklch(75% 0.199 175);
+    --xushi-color-teal-200: oklch(68% 0.199 175);
+    --xushi-color-teal-300: oklch(61% 0.199 175);
+    --xushi-color-teal-400: oklch(54% 0.199 175);
+    --xushi-color-teal-500: oklch(47% 0.199 175);
+    --xushi-color-teal-600: oklch(40% 0.199 175);
+    --xushi-color-teal-700: oklch(33% 0.199 175);
+    --xushi-color-teal-800: oklch(26% 0.199 175);
+    --xushi-color-teal-900: oklch(19% 0.199 175);
+    --xushi-color-teal-950: oklch(13% 0.199 175);
+
+    /* ── Cyan ── hue 200 */
+    --xushi-color-cyan-50:  oklch(85% 0.199 200);
+    --xushi-color-cyan-100: oklch(75% 0.199 200);
+    --xushi-color-cyan-200: oklch(68% 0.199 200);
+    --xushi-color-cyan-300: oklch(61% 0.199 200);
+    --xushi-color-cyan-400: oklch(54% 0.199 200);
+    --xushi-color-cyan-500: oklch(47% 0.199 200);
+    --xushi-color-cyan-600: oklch(40% 0.199 200);
+    --xushi-color-cyan-700: oklch(33% 0.199 200);
+    --xushi-color-cyan-800: oklch(26% 0.199 200);
+    --xushi-color-cyan-900: oklch(19% 0.199 200);
+    --xushi-color-cyan-950: oklch(13% 0.199 200);
+
+    /* ── Sky ── hue 220 */
+    --xushi-color-sky-50:  oklch(85% 0.199 220);
+    --xushi-color-sky-100: oklch(75% 0.199 220);
+    --xushi-color-sky-200: oklch(68% 0.199 220);
+    --xushi-color-sky-300: oklch(61% 0.199 220);
+    --xushi-color-sky-400: oklch(54% 0.199 220);
+    --xushi-color-sky-500: oklch(47% 0.199 220);
+    --xushi-color-sky-600: oklch(40% 0.199 220);
+    --xushi-color-sky-700: oklch(33% 0.199 220);
+    --xushi-color-sky-800: oklch(26% 0.199 220);
+    --xushi-color-sky-900: oklch(19% 0.199 220);
+    --xushi-color-sky-950: oklch(13% 0.199 220);
+
+    /* ── Blue ── hue 245 */
+    --xushi-color-blue-50:  oklch(85% 0.199 245);
+    --xushi-color-blue-100: oklch(75% 0.199 245);
+    --xushi-color-blue-200: oklch(68% 0.199 245);
+    --xushi-color-blue-300: oklch(61% 0.199 245);
+    --xushi-color-blue-400: oklch(54% 0.199 245);
+    --xushi-color-blue-500: oklch(47% 0.199 245);
+    --xushi-color-blue-600: oklch(40% 0.199 245);
+    --xushi-color-blue-700: oklch(33% 0.199 245);
+    --xushi-color-blue-800: oklch(26% 0.199 245);
+    --xushi-color-blue-900: oklch(19% 0.199 245);
+    --xushi-color-blue-950: oklch(13% 0.199 245);
+
+    /* ── Indigo ── hue 265 */
+    --xushi-color-indigo-50:  oklch(85% 0.199 265);
+    --xushi-color-indigo-100: oklch(75% 0.199 265);
+    --xushi-color-indigo-200: oklch(68% 0.199 265);
+    --xushi-color-indigo-300: oklch(61% 0.199 265);
+    --xushi-color-indigo-400: oklch(54% 0.199 265);
+    --xushi-color-indigo-500: oklch(47% 0.199 265);
+    --xushi-color-indigo-600: oklch(40% 0.199 265);
+    --xushi-color-indigo-700: oklch(33% 0.199 265);
+    --xushi-color-indigo-800: oklch(26% 0.199 265);
+    --xushi-color-indigo-900: oklch(19% 0.199 265);
+    --xushi-color-indigo-950: oklch(13% 0.199 265);
+
+    /* ── Violet ── hue 285 */
+    --xushi-color-violet-50:  oklch(85% 0.199 285);
+    --xushi-color-violet-100: oklch(75% 0.199 285);
+    --xushi-color-violet-200: oklch(68% 0.199 285);
+    --xushi-color-violet-300: oklch(61% 0.199 285);
+    --xushi-color-violet-400: oklch(54% 0.199 285);
+    --xushi-color-violet-500: oklch(47% 0.199 285);
+    --xushi-color-violet-600: oklch(40% 0.199 285);
+    --xushi-color-violet-700: oklch(33% 0.199 285);
+    --xushi-color-violet-800: oklch(26% 0.199 285);
+    --xushi-color-violet-900: oklch(19% 0.199 285);
+    --xushi-color-violet-950: oklch(13% 0.199 285);
+
+    /* ── Purple ── hue 305 */
+    --xushi-color-purple-50:  oklch(85% 0.199 305);
+    --xushi-color-purple-100: oklch(75% 0.199 305);
+    --xushi-color-purple-200: oklch(68% 0.199 305);
+    --xushi-color-purple-300: oklch(61% 0.199 305);
+    --xushi-color-purple-400: oklch(54% 0.199 305);
+    --xushi-color-purple-500: oklch(47% 0.199 305);
+    --xushi-color-purple-600: oklch(40% 0.199 305);
+    --xushi-color-purple-700: oklch(33% 0.199 305);
+    --xushi-color-purple-800: oklch(26% 0.199 305);
+    --xushi-color-purple-900: oklch(19% 0.199 305);
+    --xushi-color-purple-950: oklch(13% 0.199 305);
+
+    /* ── Fuchsia ── hue 325 */
+    --xushi-color-fuchsia-50:  oklch(85% 0.199 325);
+    --xushi-color-fuchsia-100: oklch(75% 0.199 325);
+    --xushi-color-fuchsia-200: oklch(68% 0.199 325);
+    --xushi-color-fuchsia-300: oklch(61% 0.199 325);
+    --xushi-color-fuchsia-400: oklch(54% 0.199 325);
+    --xushi-color-fuchsia-500: oklch(47% 0.199 325);
+    --xushi-color-fuchsia-600: oklch(40% 0.199 325);
+    --xushi-color-fuchsia-700: oklch(33% 0.199 325);
+    --xushi-color-fuchsia-800: oklch(26% 0.199 325);
+    --xushi-color-fuchsia-900: oklch(19% 0.199 325);
+    --xushi-color-fuchsia-950: oklch(13% 0.199 325);
+
+    /* ── Pink ── hue 350 */
+    --xushi-color-pink-50:  oklch(85% 0.199 350);
+    --xushi-color-pink-100: oklch(75% 0.199 350);
+    --xushi-color-pink-200: oklch(68% 0.199 350);
+    --xushi-color-pink-300: oklch(61% 0.199 350);
+    --xushi-color-pink-400: oklch(54% 0.199 350);
+    --xushi-color-pink-500: oklch(47% 0.199 350);
+    --xushi-color-pink-600: oklch(40% 0.199 350);
+    --xushi-color-pink-700: oklch(33% 0.199 350);
+    --xushi-color-pink-800: oklch(26% 0.199 350);
+    --xushi-color-pink-900: oklch(19% 0.199 350);
+    --xushi-color-pink-950: oklch(13% 0.199 350);
+
+    /* ── Rose ── hue 10 */
+    --xushi-color-rose-50:  oklch(85% 0.199 10);
+    --xushi-color-rose-100: oklch(75% 0.199 10);
+    --xushi-color-rose-200: oklch(68% 0.199 10);
+    --xushi-color-rose-300: oklch(61% 0.199 10);
+    --xushi-color-rose-400: oklch(54% 0.199 10);
+    --xushi-color-rose-500: oklch(47% 0.199 10);
+    --xushi-color-rose-600: oklch(40% 0.199 10);
+    --xushi-color-rose-700: oklch(33% 0.199 10);
+    --xushi-color-rose-800: oklch(26% 0.199 10);
+    --xushi-color-rose-900: oklch(19% 0.199 10);
+    --xushi-color-rose-950: oklch(13% 0.199 10);
+
+    /* ── Slate ── hue 240 */
+    --xushi-color-slate-50:  oklch(95% 0.012 240);
+    --xushi-color-slate-100: oklch(88% 0.012 240);
+    --xushi-color-slate-200: oklch(78% 0.012 240);
+    --xushi-color-slate-300: oklch(68% 0.012 240);
+    --xushi-color-slate-400: oklch(58% 0.012 240);
+    --xushi-color-slate-500: oklch(48% 0.012 240);
+    --xushi-color-slate-600: oklch(38% 0.012 240);
+    --xushi-color-slate-700: oklch(29% 0.012 240);
+    --xushi-color-slate-800: oklch(21% 0.012 240);
+    --xushi-color-slate-900: oklch(14% 0.012 240);
+    --xushi-color-slate-950: oklch(9%  0.012 240);
+
+    /* ── Gray ── hue 0 */
+    --xushi-color-gray-50:  oklch(95% 0 0);
+    --xushi-color-gray-100: oklch(88% 0 0);
+    --xushi-color-gray-200: oklch(78% 0 0);
+    --xushi-color-gray-300: oklch(68% 0 0);
+    --xushi-color-gray-400: oklch(58% 0 0);
+    --xushi-color-gray-500: oklch(48% 0 0);
+    --xushi-color-gray-600: oklch(38% 0 0);
+    --xushi-color-gray-700: oklch(29% 0 0);
+    --xushi-color-gray-800: oklch(21% 0 0);
+    --xushi-color-gray-900: oklch(14% 0 0);
+    --xushi-color-gray-950: oklch(9%  0 0);
+}
+
+/* ============================================================
+|  SECTION 2 - STRUCTURE
+============================================================ */
+
+:root {
+    --ease-out-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-in-smooth: cubic-bezier(0.4, 0, 1, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html, body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--xushi-color-base-300);
+    color: var(--xushi-color-base-content);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
+}
+
+[x-cloak] {
+    display: none !important;
+}
+
+/* ── Scrollbar hide ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* ── Scrollbar styled (global XushiUI) ── */
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--xushi-color-primary) transparent;
+}
+
+/* Chromium / Safari */
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--xushi-color-base-border);
+    border-radius: 9999px;
+    transition: background 150ms ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: var(--xushi-color-base-content-muted);
+}
+
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/* ── Root Layout ── */
+.xushimainlayout {
+    display: grid;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    isolation: isolate;
+    grid-template-areas:
+        "sidebar header"
+        "sidebar main";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+}
+
+.xushimainlayout2 {
+    display: grid;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    isolation: isolate;
+    grid-template-areas:
+        "header header"
+        "sidebar main";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+}
+
+
+/* ── Backdrop ── */
+.xushi-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: var(--xushi-z-overlay-backdrop);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.xushi-overlay-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* ── Auth Shell ── */
+.xushi-auth-shell {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.xushi-auth-split-panel { display: none; }
+@media (min-width: 768px) {
+    .xushi-auth-split-panel { display: flex; }
+}
+
+/* ============================================================
+|  SECTION 3 - ANIMATIONS
+============================================================ */
+
+@keyframes xushi-modal-in    { from { opacity: 0; transform: translate(-50%, -48%) scale(0.97); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes xushi-modal-out   { from { opacity: 1; transform: translate(-50%, -50%) scale(1);    } to { opacity: 0; transform: translate(-50%, -52%) scale(0.97); } }
+@keyframes xushi-fade-in     { from { opacity: 0; } to { opacity: 1; } }
+@keyframes xushi-fade-out    { from { opacity: 1; } to { opacity: 0; } }
+@keyframes xushi-slide-down  { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes xushi-slide-up    { from { opacity: 1; transform: translateY(0);    } to { opacity: 0; transform: translateY(-6px); } }
+@keyframes xushi-bounce {
+    0%, 100% { transform: translateY(0);    animation-timing-function: ease-in-out; }
+    25%       { transform: translateY(-4px); animation-timing-function: ease-out; }
+    50%       { transform: translateY(0);    animation-timing-function: ease-in; }
+    75%       { transform: translateY(-3px); animation-timing-function: ease-out; }
+}
+
+/* ── Drawer direction keyframes ── */
+@keyframes xushi-drawer-in-left   { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes xushi-drawer-out-left  { from { transform: translateX(0); }     to { transform: translateX(-100%); } }
+@keyframes xushi-drawer-in-right  { from { transform: translateX(100%); }  to { transform: translateX(0); } }
+@keyframes xushi-drawer-out-right { from { transform: translateX(0); }     to { transform: translateX(100%); } }
+@keyframes xushi-drawer-in-top    { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes xushi-drawer-out-top   { from { transform: translateY(0); }     to { transform: translateY(-100%); } }
+@keyframes xushi-drawer-in-bottom { from { transform: translateY(100%); }  to { transform: translateY(0); } }
+@keyframes xushi-drawer-out-bottom{ from { transform: translateY(0); }     to { transform: translateY(100%); } }
+
+/* ── Animation utility classes ── */
+.xushi-modal-enter    { animation: xushi-modal-in   260ms var(--ease-out-smooth) forwards; }
+.xushi-modal-leave    { animation: xushi-modal-out  140ms var(--ease-in-smooth)  backwards; }
+.xushi-backdrop-enter { animation: xushi-fade-in    180ms var(--ease-out-smooth) forwards; }
+.xushi-backdrop-leave { animation: xushi-fade-out   120ms var(--ease-in-smooth)  backwards; }
+.xushi-drawer-enter-left   { animation: xushi-drawer-in-left    260ms var(--ease-out-smooth) forwards; }
+.xushi-drawer-leave-left   { animation: xushi-drawer-out-left   200ms var(--ease-in-smooth)  backwards; }
+.xushi-drawer-enter-right  { animation: xushi-drawer-in-right   260ms var(--ease-out-smooth) forwards; }
+.xushi-drawer-leave-right  { animation: xushi-drawer-out-right  200ms var(--ease-in-smooth)  backwards; }
+.xushi-drawer-enter-top    { animation: xushi-drawer-in-top     260ms var(--ease-out-smooth) forwards; }
+.xushi-drawer-leave-top    { animation: xushi-drawer-out-top    200ms var(--ease-in-smooth)  backwards; }
+.xushi-drawer-enter-bottom { animation: xushi-drawer-in-bottom  260ms var(--ease-out-smooth) forwards; }
+.xushi-drawer-leave-bottom { animation: xushi-drawer-out-bottom 200ms var(--ease-in-smooth)  backwards; }
+.xushi-dropdown-enter { animation: xushi-slide-down 180ms var(--ease-out-smooth) forwards; }
+.xushi-dropdown-leave { animation: xushi-slide-up   120ms var(--ease-in-smooth)  backwards; }
+.xushi-toast-enter       { animation: xushi-slide-down 200ms var(--ease-out-smooth) forwards; }
+.xushi-toast-leave       { animation: xushi-fade-out   200ms var(--ease-in-smooth)  forwards; }
+.xushi-toast-enter-start { opacity: 0; transform: translateY(0.5rem); }
+.xushi-toast-enter-end   { opacity: 1; transform: translateY(0); }
+.xushi-toast-leave-start { opacity: 1; transform: scale(1); }
+.xushi-toast-leave-end   { opacity: 0; transform: scale(0.95); }
