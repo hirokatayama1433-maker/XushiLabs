@@ -10,58 +10,17 @@ use Symfony\Component\Console\Attribute\AsCommand;
 class PublishCommand extends Command
 {
     protected $signature = 'xushi:publish
-                            {components?* : Component name(s) to publish}
-                            {--all : Publish all components}
+                            {components?* : Names, e.g. button sidebar-navitem layouts/layout auth/guest}
+                            {--all : Publish everything}
+                            {--components : Publish all components}
+                            {--layouts : Publish all layouts, auth layouts and partials}
                             {--force : Overwrite existing files}';
 
-    protected $description = 'Publish Xushi UI components and layouts for customization.';
+    protected $description = 'Publish XushiUI components and layouts for customization.';
 
     protected Filesystem $files;
 
-    protected array $publishableComponents = [
-        'button', 'badge', 'alert', 'avatar', 'card', 'progress',
-        'modal', 'drawer', 'dropdown', 'tooltip', 'popover',
-        'input', 'textarea', 'select', 'checkbox', 'radio', 'range', 'file', 'toggle', 'fieldset',
-        'theme-toggle',
-        'layout/header', 'layout/main', 'layout/sidebar',
-        'header/brand', 'header/avatar', 'header/nav',
-        'sidebar/brand', 'sidebar/avatar', 'sidebar/label',
-        'sidebar/navitem', 'sidebar/navtree', 'sidebar/navtreeitem',
-        'separator',
-        'heading',
-        'text',
-        'callout',
-        'skeleton',
-        'breadcrumbs',
-        'breadcrumb/item',
-        'accordion',
-        'accordion/item',
-        'toast',
-        'pagination',
-        'profile',
-        'timeline',
-        'timeline/item',
-        'carousel',
-        'carousel/slide',
-        'header/brand', 'header/avatar', 'header/nav', 'header/search',
-    ];
-
-    protected array $publishableLayouts = [
-        'layouts/layout',
-        'layouts/layout2',
-        'layouts/layout3',
-    ];
-
-    protected array $publishableAuthLayouts = [
-        'auth/guest',
-        'auth/guest2',
-    ];
-
-    protected array $layoutPartials = [
-        'layouts/partials/header',
-        'layouts/partials/sidebar',
-    ];
-
+    /** Layouts that need their partials published with them. */
     protected array $layoutPartialDependencies = [
         'layouts/layout'  => ['layouts/partials/header', 'layouts/partials/sidebar'],
         'layouts/layout2' => ['layouts/partials/sidebar'],
@@ -71,137 +30,138 @@ class PublishCommand extends Command
     public function __construct(Filesystem $files)
     {
         parent::__construct();
+
         $this->files = $files;
     }
 
     public function handle(): int
     {
-        $targets = $this->option('all')
-            ? array_merge(
-                $this->publishableComponents,
-                $this->publishableLayouts,
-                $this->publishableAuthLayouts,
-                $this->layoutPartials
-            )
-            : ($this->argument('components') ?: $this->askWhichComponent());
+        $available = $this->available();
 
-        $targets = $this->withPartialDependencies($targets);
+        if ($available === []) {
+            $this->components->error('No publishable views found in the package.');
 
-        foreach ($targets as $component) {
-            $this->publishComponent($component);
+            return self::FAILURE;
         }
 
-        return self::SUCCESS;
+        $groups = array_keys(array_filter([
+            'components' => $this->option('components'),
+            'layouts'    => $this->option('layouts'),
+        ]));
+
+        if ($this->option('all')) {
+            $targets = array_keys($available);
+        } elseif ($groups !== []) {
+            $targets = array_keys(array_filter($available, fn ($item) => in_array($item['group'], $groups, true)));
+        } else {
+            $targets = $this->argument('components')
+                ?: [$this->choice('Which component or layout would you like to publish?', array_keys($available))];
+        }
+
+        $targets = $this->withPartialDependencies(
+            array_map(fn ($target) => $this->normalize($target, $available), $targets)
+        );
+
+        $unknown = false;
+
+        foreach ($targets as $name) {
+            if (! isset($available[$name])) {
+                $this->components->warn("Unknown component or layout: {$name}");
+                $unknown = true;
+
+                continue;
+            }
+
+            $this->publish($name, $available[$name]);
+        }
+
+        return $unknown ? self::FAILURE : self::SUCCESS;
+    }
+
+    /**
+     * Everything under stubs/resources/views/components, keyed by publish name:
+     *   xushi/button.blade.php          => "button"
+     *   layouts/layout.blade.php        => "layouts/layout"
+     *   layouts/partials/header.blade.php => "layouts/partials/header"
+     */
+    protected function available(): array
+    {
+        $root = __DIR__ . '/../../stubs/resources/views/components';
+
+        if (! is_dir($root)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($this->files->allFiles($root) as $file) {
+            $relative = str_replace('\\', '/', $file->getRelativePathname());
+
+            if (! str_ends_with($relative, '.blade.php')) {
+                continue;
+            }
+
+            $path        = substr($relative, 0, -strlen('.blade.php'));
+            $isComponent = str_starts_with($path, 'xushi/');
+            $name        = $isComponent ? substr($path, strlen('xushi/')) : $path;
+
+            $items[$name] = [
+                'src'   => $file->getPathname(),
+                'dest'  => resource_path('views/components/' . $path . '.blade.php'),
+                'where' => 'resources/views/components/' . dirname($path) . '/',
+                'group' => $isComponent ? 'components' : 'layouts',
+            ];
+        }
+
+        ksort($items);
+
+        return $items;
+    }
+
+    protected function normalize(string $target, array $available): string
+    {
+        $target = trim(str_replace('.blade.php', '', $target), '/');
+
+        if (isset($available[$target])) {
+            return $target;
+        }
+
+        if (str_starts_with($target, 'xushi/')) {
+            $target = substr($target, strlen('xushi/'));
+        }
+
+        // Legacy nested names: sidebar/brand => sidebar-brand
+        $flat = str_replace(['/', '.'], '-', $target);
+
+        return isset($available[$flat]) ? $flat : $target;
     }
 
     protected function withPartialDependencies(array $targets): array
     {
-        $withDependencies = $targets;
+        $all = $targets;
 
         foreach ($targets as $target) {
             foreach ($this->layoutPartialDependencies[$target] ?? [] as $partial) {
-                if (! in_array($partial, $withDependencies, true)) {
-                    $withDependencies[] = $partial;
+                if (! in_array($partial, $all, true)) {
+                    $all[] = $partial;
                 }
             }
         }
 
-        return $withDependencies;
+        return array_values(array_unique($all));
     }
 
-    protected function askWhichComponent(): array
+    protected function publish(string $name, array $item): void
     {
-        $choice = $this->choice(
-            'Which component or layout would you like to publish?',
-            array_merge($this->publishableComponents, $this->publishableLayouts, $this->publishableAuthLayouts)
-        );
+        if ($this->files->exists($item['dest']) && ! $this->option('force')) {
+            $this->components->twoColumnDetail("<fg=yellow>Skipped</> {$name}.blade.php", '<fg=gray>use --force to overwrite</>');
 
-        return [$choice];
-    }
-
-    protected function publishComponent(string $component): void
-    {
-        $force = $this->option('force');
-
-        [$bladeSrc, $bladeDest, $publishLocation] = $this->resolveBladePath($component);
-
-        if ($this->files->exists($bladeSrc)) {
-            if ($this->files->exists($bladeDest) && ! $force) {
-                $this->components->twoColumnDetail("<fg=yellow>Skipped</> {$component}.blade.php", '<fg=gray>use --force to overwrite</>');
-            } else {
-                $this->files->ensureDirectoryExists(dirname($bladeDest));
-                $this->files->copy($bladeSrc, $bladeDest);
-                $this->components->twoColumnDetail(
-                    "<fg=green>Published</> {$component}.blade.php",
-                    "<fg=gray>{$publishLocation}</>"
-                );
-            }
-        }
-
-        if ($this->isLayoutTarget($component)) {
             return;
         }
 
-        $className = $this->componentToClassName($component);
-        $phpSrc    = __DIR__ . '/../Components/' . $className . '.php';
-        $phpDest   = app_path('View/Components/Xushi/' . $className . '.php');
+        $this->files->ensureDirectoryExists(dirname($item['dest']));
+        $this->files->copy($item['src'], $item['dest']);
 
-        if ($this->files->exists($phpSrc)) {
-            if ($this->files->exists($phpDest) && ! $force) {
-                $this->components->twoColumnDetail("<fg=yellow>Skipped</> {$className}.php", '<fg=gray>use --force to overwrite</>');
-            } else {
-                $this->files->ensureDirectoryExists(dirname($phpDest));
-                $contents = str_replace(
-                    'namespace Xushi\\UI\\Components',
-                    'namespace App\\View\\Components\\Xushi',
-                    $this->files->get($phpSrc)
-                );
-                $this->files->put($phpDest, $contents);
-                $this->components->twoColumnDetail("<fg=green>Published</> {$className}.php", '<fg=gray>app/View/Components/Xushi/</>');
-            }
-        }
-    }
-
-    protected function componentToClassName(string $component): string
-    {
-        return collect(explode('/', $component))
-            ->map(fn ($part) => str($part)->studly())
-            ->implode('/');
-    }
-
-    protected function resolveBladePath(string $component): array
-        {
-            // 1. xushi components → views/components/xushi/
-            $componentSrc  = __DIR__ . '/../../stubs/resources/views/components/xushi/' . $component . '.blade.php';
-            $componentDest = resource_path('views/components/xushi/' . $component . '.blade.php');
-
-            if ($this->files->exists($componentSrc)) {
-                return [$componentSrc, $componentDest, 'resources/views/components/xushi/'];
-            }
-
-            // 2. layouts/* and auth/* → views/components/{layouts|auth}/
-            //    Source lives in stubs/resources/views/components/{layouts|auth}/
-            //    Destination goes to views/components/{layouts|auth}/
-            $viewSrc  = __DIR__ . '/../../stubs/resources/views/components/' . $component . '.blade.php';
-            $viewDest = resource_path('views/components/' . $component . '.blade.php');
-
-            if ($this->files->exists($viewSrc)) {
-                return [$viewSrc, $viewDest, 'resources/views/components/' . dirname($component) . '/'];
-            }
-
-            // 3. Legacy fallback for old stub locations (views/layouts/, views/auth/)
-            $legacySrc  = __DIR__ . '/../../stubs/resources/views/' . $component . '.blade.php';
-            $legacyDest = resource_path('views/components/' . $component . '.blade.php');
-
-            return [$legacySrc, $legacyDest, 'resources/views/components/' . dirname($component) . '/'];
-        }
-
-    protected function isLayoutTarget(string $component): bool
-    {
-        // Anything that is NOT a xushi component (layouts/*, auth/*) has no
-        // PHP class to publish alongside the Blade view.
-        $componentSrc = __DIR__ . '/../../stubs/resources/views/components/xushi/' . $component . '.blade.php';
-
-        return ! $this->files->exists($componentSrc);
+        $this->components->twoColumnDetail("<fg=green>Published</> {$name}.blade.php", "<fg=gray>{$item['where']}</>");
     }
 }

@@ -1,0 +1,35 @@
+I read all ten files in src/. Nothing is broken. The findings are mostly leftovers and code that nothing uses. I checked every claim about "unused" against the blades, stubs, CSS and JS.
+
+Xushi.php: fine. It's a plain facade for xushi, with nothing to change.
+
+XushiManager.php: the three render* methods are used by the Blade directives. The other four (styleString, splitAttributes, forwardedAttributes, attributesAfter) are called by no blade, stub or PHP file. Delete them unless you want them as public helpers for app authors.
+
+XushiServiceProvider.php: the structure is clean, with one method per concern. There are three small leftovers:
+
+The xushi.compiler binding is never resolved anywhere.
+The pluck macro on ComponentAttributeBag is used by no blade.
+The Xushi alias is registered twice, in AliasLoader here and in composer.json under extra.laravel.aliases. Keep one, and I'd keep the composer.json one.
+
+XushiTagCompiler.php: it works, but it copies Laravel's tag regexes and relies on protected internals (boundAttributes, componentString). composer.json allows Laravel 10 to 13, so these are the lines most likely to break on a framework upgrade, and you should test them against each supported version. The compile() override for @verbatim is probably redundant, because Blade stores verbatim blocks before it runs precompilers. I'd test that before deleting it.
+
+XushiAssetManager.php: the strongest file. Asset URLs are versioned by file modification time and cached for a year with a proper 304, and the critical <style> gives the page color before the script runs. Two things to keep in mind. The appearance script duplicates the theme parser from XushiThemeRegistry::parse, on purpose, for first paint, so change them together. It also sets sidebar-collapsed from localStorage, which repeats a line in Sidebar.init() and is also on purpose, to avoid a flash.
+
+Console/InstallCommand.php: fine. It only checks package.json for Alpine and prints the setup steps. The example default theme it prints is a valid key.
+
+Console/PublishCommand.php: good, and it discovers files from disk. Two nits:
+
+The layout-to-partial map is hardcoded, which breaks our "no hardcoded registries" rule. All three layouts use the pattern @include('components.layouts.partials.X'), so the command can scan for that instead.
+normalize() still accepts the legacy nested names like sidebar/brand. That only helps people with old ZayneUI names, so it can go.
+
+XushiThemeRegistry.php: clean. getThemeNames() (which builds all 504 combinations) and javascriptThemeNames() are used by nothing, so delete them.
+
+XushiThemes.php: the data matches its headers, with 12 bases, 14 accents and 3 layouts. Open items you already know about:
+
+container-padding, container-gap and control-padding are dead layout tokens.
+The bridge tokens in $derived are still undecided.
+The status colors (danger, success, warning, info) aren't here. They live once in the :root of xushi.css, so they're identical in light and dark.
+Cosmetic only: the => alignment is inconsistent, rose has trailing spaces, and neutral uses four-decimal oklch while the others use percentages.
+
+Icons/IconMap.php: 1,754 icons with no duplicate keys, and an unknown name returns null, which is what the skill's "renders nothing" rule needs. The order isn't sorted (airplay comes before air-vent) and the first entry is indented differently, but neither matters.
+
+Suggested cleanup: delete the four XushiManager helpers, the pluck macro, the xushi.compiler binding, the two theme-name methods, the duplicate alias, and the hardcoded partial map (replace it with a scan of the @include lines). Want a python script for those, or would you rather keep any of the helpers?

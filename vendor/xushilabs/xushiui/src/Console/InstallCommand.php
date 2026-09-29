@@ -11,7 +11,7 @@ class InstallCommand extends Command
 {
     protected $signature = 'xushi:install';
 
-    protected $description = 'Wire XushiUI directives into your Laravel app.';
+    protected $description = 'Check requirements and print the XushiUI setup steps.';
 
     protected Filesystem $files;
 
@@ -28,17 +28,17 @@ class InstallCommand extends Command
         $this->newLine();
 
         $this->ensureAlpineJs();
-        $this->registerServiceProvider();
 
         $this->newLine();
-        $this->components->info('XushiUI is ready.');
+        $this->components->info('XushiUI is ready (the service provider is auto-discovered via composer.json).');
         $this->newLine();
         $this->line('  <fg=gray>Add to your layout:</>');
-        $this->line('  <fg=cyan>@xushiStyles</> inside <fg=cyan><head></>');
-        $this->line('  <fg=cyan>@xushiScripts</> before <fg=cyan></body></>');
-        $this->line('  <fg=cyan>@xushiAppearance</> inside <fg=cyan><head></> (optional, for theme persistence)');
+        $this->line('  <fg=cyan>@xushiAppearance</> then <fg=cyan>@xushiStyles</> inside <fg=cyan><head></>');
+        $this->line('  <fg=cyan>@xushiScripts</> before <fg=cyan></body></>, and load Alpine.js 3 after it');
         $this->newLine();
-        $this->line('  <fg=gray>Set theme on <html>:</> <fg=cyan>class="light"</> | <fg=cyan>class="dark"</> | <fg=cyan>class="abyss"</>');
+        $this->line('  <fg=gray>Theme key:</> <fg=cyan>xushitheme-{palette}-{accent}-{mode}-{layout}</>');
+        $this->line('  <fg=gray>Default theme:</> <fg=cyan>XushiThemeRegistry::setDefault(\'xushitheme-warm-blue-dark-rounded\')</>');
+        $this->line('  <fg=gray>Per page:</> <fg=cyan><html data-xushi-theme="..."></> (a visitor\'s saved choice wins)');
         $this->newLine();
 
         return self::SUCCESS;
@@ -49,7 +49,7 @@ class InstallCommand extends Command
         $packageJsonPath = base_path('package.json');
 
         if (! $this->files->exists($packageJsonPath)) {
-            $this->components->warn('package.json not found. Install Alpine.js manually: npm install alpinejs');
+            $this->components->warn('package.json not found. Load Alpine.js from a CDN or run: npm install alpinejs');
 
             return;
         }
@@ -63,20 +63,6 @@ class InstallCommand extends Command
             return;
         }
 
-        $this->components->warn('Alpine.js not found in package.json.');
-        $this->line('  Run: <fg=cyan>npm install alpinejs</>');
-    }
-
-    protected function registerServiceProvider(): void
-    {
-        $bootstrapPath = base_path('bootstrap/providers.php');
-
-        if (! $this->files->exists($bootstrapPath)) {
-            $this->components->warn('bootstrap/providers.php not found. XushiUI auto-discovers via composer.json.');
-
-            return;
-        }
-
-        $this->components->twoColumnDetail('<fg=green>Auto-discovered</> XushiServiceProvider', '<fg=gray>via composer.json</>');
+        $this->components->warn('Alpine.js not found in package.json. Use a CDN script tag, or run: npm install alpinejs');
     }
 }

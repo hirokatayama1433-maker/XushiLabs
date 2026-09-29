@@ -1,12 +1,15 @@
 /* ============================================================
 |  xushi.js - XushiUI JavaScript
-|  1. POSITIONING
-|  2. ALPINE DATA
-|  3. SIDEBAR
-|  4. SUBBAR
-|  5. THEME
+|  - Overlay stack + smart positioning
+|  - Sidebar
+|  - Theme
+|  - Input actions
+|  - Table sort
+|  - Toast globals
+|  - Sidebar scroll check
+|  - Form components (pillbox, autocomplete, otp, color picker,
+|    date picker, time picker, calendar)
 ============================================================ */
-// import Collapse from '@alpinejs/collapse'
 
 /* ============================================================
 |  OVERLAY STACK — global singleton
@@ -48,7 +51,7 @@ const XushiOverlayStack = {
 window.XushiOverlayStack = XushiOverlayStack;
 
 /* ============================================================
-|  SECTION 1 - SMART POSITIONING
+|  SMART POSITIONING
 ============================================================ */
 
 function xushiPosition(trigger, panel) {
@@ -102,28 +105,10 @@ function xushiPosition(trigger, panel) {
 
 
 /* ============================================================
-|  SECTION 2 - ALPINE DATA
-============================================================ */
-
-function xushiLayout() {
-    return {
-        sidebarCollapsed: false,
-        mobileOpen: false,
-    };
-}
-
-document.addEventListener('alpine:init', () => {
-    if (typeof Alpine === 'undefined') return;
-    Alpine.data('xushiLayout', xushiLayout);
-});
-
-
-/* ============================================================
-|  SECTION 3 - SIDEBAR
+|  SIDEBAR
 ============================================================ */
 
 const Sidebar = {
-    scrollRegions:   [],
     savedOpenTrees:  new Set(),
 
     mobileQuery: window.matchMedia('(max-width: 768px)'),
@@ -237,25 +222,6 @@ const Sidebar = {
         }).observe(document.documentElement, { attributeFilter: ['class'] });
     },
 
-    updateScrollIndicator(region) {
-        const indicator = region.parentElement?.querySelector('[data-sidebar-scroll-indicator]');
-        if (!indicator) return;
-        const canScroll = region.scrollHeight > region.clientHeight + 1;
-        const atBottom  = region.scrollTop + region.clientHeight >= region.scrollHeight - 4;
-        const show      = canScroll && !atBottom;
-        indicator.style.opacity = show ? '1' : '0';
-        indicator.style.height  = show ? '20px' : '0';
-    },
-
-    initScrollRegions() {
-        this.scrollRegions = Array.from(document.querySelectorAll('[data-sidebar-scroll-region]'));
-        this.scrollRegions.forEach(region => {
-            new ResizeObserver(() => this.updateScrollIndicator(region)).observe(region);
-            region.addEventListener('scroll', () => this.updateScrollIndicator(region), { passive: true });
-            this.updateScrollIndicator(region);
-        });
-    },
-
     init() {
         if (localStorage.getItem('xushi-sidebar') === 'true') {
             document.documentElement.classList.add('sidebar-collapsed');
@@ -265,14 +231,11 @@ const Sidebar = {
         this.syncMobileState();
 
         document.addEventListener('DOMContentLoaded', () => {
-            this.initScrollRegions();
-
             window.addEventListener('resize', () => {
                 document.querySelectorAll('.xushinavtree.navtree-open').forEach(tree => {
                     const items = tree.querySelector('.navtree-items');
                     if (items) items.style.maxHeight = items.scrollHeight + 'px';
                 });
-                this.scrollRegions.forEach(r => this.updateScrollIndicator(r));
             });
 
             requestAnimationFrame(() => {
@@ -287,69 +250,77 @@ const Sidebar = {
 Sidebar.init();
 
 /* ============================================================
-|  SECTION 4 - SUBBAR
-============================================================ */
-
-const Subbar = {
-    get collapsed() { return document.documentElement.classList.contains('subbar-collapsed'); },
-    collapse() { document.documentElement.classList.add('subbar-collapsed'); localStorage.setItem('xushi-subbar', 'true'); },
-    expand()   { document.documentElement.classList.remove('subbar-collapsed'); localStorage.setItem('xushi-subbar', 'false'); },
-    toggle()   { this.collapsed ? this.expand() : this.collapse(); },
-};
-
-if (localStorage.getItem('xushi-subbar') === 'true') Subbar.collapse();
-
-/* ============================================================
-|  SECTION 5 - THEME
+|  THEME
 ============================================================ */
 
 const Theme = {
-    names: window.XushiThemeNames || ['light', 'dark', 'abyss'],
-    cycle: ['light', 'dark', 'abyss'],
-    current: localStorage.getItem('xushi-theme') || 'xushitheme-neutral-light-minimalist',
+    storageKey: window.XushiThemeStorageKey || 'xushi-theme',
+    fallback:   window.XushiThemeDefault    || 'xushitheme-neutral-neutral-light-default',
+    current:    null,
 
-    set(theme) {
-        if (this.names.indexOf(theme) < 0) {
-            theme = 'xushitheme-neutral-light-minimalist';
+    parse(key) {
+        return typeof window.XushiThemeParse === 'function' ? window.XushiThemeParse(key) : null;
+    },
+
+    parts() {
+        return this.parse(this.current);
+    },
+
+    set(key) {
+        if (typeof window.XushiCompileTheme !== 'function') {
+            console.warn('[Xushi] @xushiAppearance is missing from <head>; theme not applied.');
+            return;
         }
 
-        this.current = theme;
-        document.documentElement.classList.remove.apply(document.documentElement.classList, this.names);
-        document.documentElement.classList.add(theme);
-        localStorage.setItem('xushi-theme', theme);
+        if (!this.parse(key)) key = this.fallback;
+
+        this.current = window.XushiCompileTheme(key);
+
+        try { localStorage.setItem(this.storageKey, this.current); } catch (e) {}
+
         document.dispatchEvent(new CustomEvent('xushi-theme-changed', {
-            detail: { theme }
+            detail: Object.assign({ theme: this.current }, this.parts())
         }));
     },
 
-    toggle() {
-        if      (this.current === 'light') this.set('dark');
-        else if (this.current === 'dark')  this.set('light');
-        else                               this.set('xushitheme-neutral-light-minimalist');
+    update(part, value) {
+        const p = this.parts();
+        if (!p || !(part in p)) return;
+
+        p[part] = value;
+        const key = `xushitheme-${p.palette}-${p.accent}-${p.mode}-${p.layout}`;
+
+        if (!this.parse(key)) {
+            console.warn('[Xushi] Unknown theme ' + part + ': ' + value);
+            return;
+        }
+
+        this.set(key);
     },
 
-    next() {
-        const idx = this.cycle.indexOf(this.current);
-        const next = idx < 0 ? 0 : (idx + 1) % this.cycle.length;
-        this.set(this.cycle[next] || 'xushitheme-neutral-light-minimalist');
-    },
+    setMode(mode)       { this.update('mode', mode); },
+    setPalette(palette) { this.update('palette', palette); },
+    setAccent(accent)   { this.update('accent', accent); },
+    setLayout(layout)   { this.update('layout', layout); },
 
-    isLight() { return this.current === 'light'; },
-    isDark()  { return this.current === 'dark';  },
-    isAbyss() { return this.current === 'abyss'; },
+    toggle()  { this.setMode(this.isDark() ? 'light' : 'dark'); },
+
+    isLight() { return this.parts()?.mode === 'light'; },
+    isDark()  { return this.parts()?.mode === 'dark'; },
 };
 
-Theme.set(Theme.current);
+// @xushiAppearance already applied the theme in <head>; just read what it settled on.
+Theme.current = document.documentElement.getAttribute('data-xushi-theme') || Theme.fallback;
 
 /* ============================================================
 |  EXPORT
 ============================================================ */
 
-window.Xushi = { Sidebar, Subbar, Theme };
+window.Xushi = { Sidebar, Theme };
 
 
 /* ============================================================
-|  SECTION 6 - INPUT ACTIONS
+|  INPUT ACTIONS
 ============================================================ */
 
 document.addEventListener('click', (e) => {
@@ -401,6 +372,10 @@ document.addEventListener('click', (e) => {
     }
 });
 
+/* ============================================================
+|  TABLE SORT
+============================================================ */
+
 function xushiTableSort() {
     return {
         toggle(column) {
@@ -451,6 +426,7 @@ window.xushiToastIcon = xushiToastIcon;
 
 /* ============================================================
 |  SIDEBAR SCROLL CHECK
+|  Called from sidebar.blade via onscroll="xushiSidebarScrollCheck(this)"
 ============================================================ */
 
 function xushiSidebarScrollCheck(el) {
@@ -463,19 +439,11 @@ function xushiSidebarScrollCheck(el) {
     indicator.style.height  = show ? '20px' : '0';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('[data-xushi-sidebar-scroll]').forEach(el => {
-        new ResizeObserver(() => xushiSidebarScrollCheck(el)).observe(el);
-        el.addEventListener('scroll', () => xushiSidebarScrollCheck(el), { passive: true });
-        xushiSidebarScrollCheck(el);
-    });
-});
-
 window.xushiSidebarScrollCheck = xushiSidebarScrollCheck;
 
 
 /* ============================================================
-|  SECTION 7 - FORM COMPONENTS
+|  FORM COMPONENTS
 |  1. Pillbox
 |  2. Autocomplete
 |  3. OTP Input
@@ -887,7 +855,7 @@ function xushiDatePicker({ value = null, min = null, max = null, format = 'MMM D
 }
 
 /* ── 6. Time Picker ── */
-function xushiTimePicker({ value = null, showSeconds = false, meridiem = false, step = 1 } = {}) {
+function xushiTimePicker({ value = null, showSeconds = false, meridiem = false } = {}) {
     const parse = (v) => {
         if (!v) return [12, 0, 0, 'AM'];
         const parts = v.split(':').map(Number);
@@ -910,7 +878,6 @@ function xushiTimePicker({ value = null, showSeconds = false, meridiem = false, 
         period: initPeriod,
         showSeconds,
         meridiem,
-        step,
 
         toggle() {
             this.open = !this.open;

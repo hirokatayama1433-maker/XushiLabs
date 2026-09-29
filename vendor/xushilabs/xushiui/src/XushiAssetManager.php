@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 class XushiAssetManager
 {
+    public const THEME_STORAGE_KEY = 'xushi-theme';
+
     public static function boot(): void
     {
         $instance = new static();
@@ -32,9 +34,9 @@ class XushiAssetManager
     public static function renderStyles(): string
     {
         $version = filemtime(__DIR__ . '/../stubs/resources/css/xushi.css');
-        $criticalTheme = static::criticalThemeStyles();
 
-        return $criticalTheme . "\n" . '<link rel="stylesheet" href="' . url('/xushi/xushi.css?v=' . $version) . '">';
+        return static::criticalThemeStyles() . "\n"
+            . '<link rel="stylesheet" href="' . url('/xushi/xushi.css?v=' . $version) . '">';
     }
 
     public static function renderScripts(): string
@@ -51,60 +53,102 @@ class XushiAssetManager
 
     protected static function appearanceScript(): string
     {
-        $bases   = json_encode(XushiThemes::$bases,   JSON_UNESCAPED_UNICODE);
-        $accents = json_encode(XushiThemes::$accents, JSON_UNESCAPED_UNICODE);
-        $layouts = json_encode(XushiThemes::$layouts, JSON_UNESCAPED_UNICODE);
-        $default = XushiThemeRegistry::getDefault();
+        $flags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP;
 
-        return <<<HTML
-<script data-xushi-appearance>
-(function() {
-    var bases   = {$bases};
-    var accents = {$accents};
-    var layouts = {$layouts};
+        $script = <<<'JS'
+(function () {
+    var bases   = __BASES__;
+    var accents = __ACCENTS__;
+    var layouts = __LAYOUTS__;
+    var DEFAULT = __DEFAULT__;
+    var STORAGE = __STORAGE__;
+    var applied = [];
+    var root    = document.documentElement;
+
+    function parse(key) {
+        if (typeof key !== 'string' || key.indexOf('xushitheme-') !== 0) return null;
+        var p = key.slice(11).split('-');
+        if (p.length < 4) return null;
+        var layout  = p[p.length - 1];
+        var mode    = p[p.length - 2];
+        var accent  = p[p.length - 3];
+        var palette = p.slice(0, p.length - 3).join('-');
+        if (!bases[palette + '-' + mode] || !accents[accent] || !layouts[layout]) return null;
+        return { palette: palette, accent: accent, mode: mode, layout: layout };
+    }
 
     function compile(key) {
-        var stripped = key.replace('xushitheme-', '');
-        var parts    = stripped.split('-');
-        var layout   = parts[parts.length - 1];
-        var mode     = parts[parts.length - 2];
-        var accent   = parts[parts.length - 3];
-        var palette  = parts.slice(0, parts.length - 3).join('-');
+        var parsed = parse(key);
+        if (!parsed) { key = DEFAULT; parsed = parse(key); }
 
         var tokens = Object.assign(
             {},
-            bases[palette + '-' + mode]   || bases['neutral-light'],
-            accents[accent]                || accents['neutral'],
-            layouts[layout]                || layouts['default']
+            bases[parsed.palette + '-' + parsed.mode],
+            accents[parsed.accent],
+            layouts[parsed.layout]
         );
 
-        var root = document.documentElement;
-        for (var k in tokens) {
-            root.style.setProperty(k, tokens[k]);
-        }
+        applied.forEach(function (k) {
+            if (!(k in tokens)) root.style.removeProperty(k);
+        });
+        for (var k in tokens) root.style.setProperty(k, tokens[k]);
+        applied = Object.keys(tokens);
+
+        root.style.colorScheme = parsed.mode;
         root.setAttribute('data-xushi-theme', key);
+        root.setAttribute('data-xushi-mode', parsed.mode);
+
+        return key;
     }
 
-    var key = document.documentElement.getAttribute('data-xushi-theme') || '{$default}';
-    compile(key);
+    var stored = null;
+    try { stored = localStorage.getItem(STORAGE); } catch (e) {}
 
-    window.XushiCompileTheme = compile;
+    compile(parse(stored) ? stored : (root.getAttribute('data-xushi-theme') || DEFAULT));
 
-    if (localStorage.getItem('xushi-sidebar') === 'true') {
-        document.documentElement.classList.add('sidebar-collapsed');
-    }
+    window.XushiCompileTheme     = compile;
+    window.XushiThemeParse       = parse;
+    window.XushiThemeDefault     = DEFAULT;
+    window.XushiThemeStorageKey  = STORAGE;
+
+    try {
+        if (localStorage.getItem('xushi-sidebar') === 'true') root.classList.add('sidebar-collapsed');
+    } catch (e) {}
 })();
-</script>
-HTML;
+JS;
+
+        $script = str_replace(
+            ['__BASES__', '__ACCENTS__', '__LAYOUTS__', '__DEFAULT__', '__STORAGE__'],
+            [
+                json_encode(XushiThemes::$bases, $flags),
+                json_encode(XushiThemes::$accents, $flags),
+                json_encode(XushiThemes::$layouts, $flags),
+                json_encode(XushiThemeRegistry::getDefault(), $flags),
+                json_encode(static::THEME_STORAGE_KEY, $flags),
+            ],
+            $script
+        );
+
+        return '<script data-xushi-appearance>' . "\n" . $script . "\n" . '</script>';
     }
 
+    /**
+     * Default theme tokens + derived tokens as :root declarations, so the page
+     * has color before (or without) the appearance script running.
+     */
     protected static function criticalThemeStyles(): string
     {
-        return <<<'HTML'
-<style data-xushi-critical-theme>
+        $default = XushiThemeRegistry::getDefault();
+        $mode    = XushiThemeRegistry::parse($default)['mode'];
+        $tokens  = array_merge(XushiThemeRegistry::tokens($default), XushiThemes::$derived);
 
-</style>
-HTML;
+        $css = 'color-scheme:' . $mode . ';';
+
+        foreach ($tokens as $name => $value) {
+            $css .= $name . ':' . $value . ';';
+        }
+
+        return '<style data-xushi-critical-theme>:root{' . $css . '}</style>';
     }
 
     protected function pretendResponseIsFile(string $file, string $contentType): mixed

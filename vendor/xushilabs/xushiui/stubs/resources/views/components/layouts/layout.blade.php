@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="light" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,9 +12,9 @@
     @include('components.layouts.partials.sidebar')
     @include('components.layouts.partials.header')
 
-    <xushi:layout.main>
+    <xushi:main>
         {{ $slot }}
-    </xushi:layout.main>
+    </xushi:main>
 
     @xushiScripts
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

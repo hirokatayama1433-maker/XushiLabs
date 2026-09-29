@@ -34,6 +34,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(94% 0.008 80)',
             '--xushi-color-base-content'       => 'oklch(22% 0.01 80)',
             '--xushi-color-base-content-subtle'=> 'oklch(52% 0.008 80)',
+            '--xushi-color-sidebar'             => 'oklch(99% 0.004 80)',
+            '--xushi-color-header'              => 'oklch(98% 0.006 80)',
         ],
         'warm-dark' => [
             '--xushi-color-base-background'    => 'oklch(14% 0.008 80)',
@@ -41,6 +43,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(24% 0.012 80)',
             '--xushi-color-base-content'       => 'oklch(92% 0.006 80)',
             '--xushi-color-base-content-subtle'=> 'oklch(62% 0.008 80)',
+            '--xushi-color-sidebar'             => 'oklch(12% 0.008 80)',
+            '--xushi-color-header'              => 'oklch(15% 0.008 80)',
         ],
         'cool-light' => [
             '--xushi-color-base-background'    => 'oklch(98% 0.006 240)',
@@ -48,6 +52,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(94% 0.008 240)',
             '--xushi-color-base-content'       => 'oklch(22% 0.01 240)',
             '--xushi-color-base-content-subtle'=> 'oklch(52% 0.008 240)',
+            '--xushi-color-sidebar'             => 'oklch(99% 0.004 240)',
+            '--xushi-color-header'              => 'oklch(98% 0.006 240)',
         ],
         'cool-dark' => [
             '--xushi-color-base-background'    => 'oklch(14% 0.008 240)',
@@ -55,6 +61,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(24% 0.012 240)',
             '--xushi-color-base-content'       => 'oklch(92% 0.006 240)',
             '--xushi-color-base-content-subtle'=> 'oklch(62% 0.008 240)',
+            '--xushi-color-sidebar'             => 'oklch(12% 0.008 240)',
+            '--xushi-color-header'              => 'oklch(15% 0.008 240)',
         ],
         'rose-light' => [
             '--xushi-color-base-background'    => 'oklch(98% 0.006 10)',
@@ -62,6 +70,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(94% 0.008 10)',
             '--xushi-color-base-content'       => 'oklch(22% 0.01 10)',
             '--xushi-color-base-content-subtle'=> 'oklch(52% 0.008 10)',
+            '--xushi-color-sidebar'             => 'oklch(99% 0.004 10)',
+            '--xushi-color-header'              => 'oklch(98% 0.006 10)',
         ],
         'rose-dark' => [
             '--xushi-color-base-background'    => 'oklch(14% 0.008 10)',
@@ -69,6 +79,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(24% 0.012 10)',
             '--xushi-color-base-content'       => 'oklch(92% 0.006 10)',
             '--xushi-color-base-content-subtle'=> 'oklch(62% 0.008 10)',
+            '--xushi-color-sidebar'             => 'oklch(12% 0.008 10)',
+            '--xushi-color-header'              => 'oklch(15% 0.008 10)',
         ],
         'forest-light' => [
             '--xushi-color-base-background'    => 'oklch(98% 0.006 145)',
@@ -76,6 +88,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(94% 0.008 145)',
             '--xushi-color-base-content'       => 'oklch(22% 0.01 145)',
             '--xushi-color-base-content-subtle'=> 'oklch(52% 0.008 145)',
+            '--xushi-color-sidebar'             => 'oklch(99% 0.004 145)',
+            '--xushi-color-header'              => 'oklch(98% 0.006 145)',
         ],
         'forest-dark' => [
             '--xushi-color-base-background'    => 'oklch(14% 0.008 145)',
@@ -83,6 +97,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(24% 0.012 145)',
             '--xushi-color-base-content'       => 'oklch(92% 0.006 145)',
             '--xushi-color-base-content-subtle'=> 'oklch(62% 0.008 145)',
+            '--xushi-color-sidebar'             => 'oklch(12% 0.008 145)',
+            '--xushi-color-header'              => 'oklch(15% 0.008 145)',
         ],
         'slate-light' => [
             '--xushi-color-base-background'    => 'oklch(98% 0.005 220)',
@@ -90,6 +106,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(93% 0.007 220)',
             '--xushi-color-base-content'       => 'oklch(22% 0.012 220)',
             '--xushi-color-base-content-subtle'=> 'oklch(52% 0.008 220)',
+            '--xushi-color-sidebar'             => 'oklch(99% 0.004 220)',
+            '--xushi-color-header'              => 'oklch(98% 0.006 220)',
         ],
         'slate-dark' => [
             '--xushi-color-base-background'    => 'oklch(14% 0.009 220)',
@@ -97,6 +115,8 @@ class XushiThemes
             '--xushi-color-base-neutral'       => 'oklch(24% 0.013 220)',
             '--xushi-color-base-content'       => 'oklch(92% 0.006 220)',
             '--xushi-color-base-content-subtle'=> 'oklch(62% 0.008 220)',
+            '--xushi-color-sidebar'             => 'oklch(12% 0.008 220)',
+            '--xushi-color-header'              => 'oklch(15% 0.008 220)',
         ],
     ];
 
@@ -221,5 +241,24 @@ class XushiThemes
             '--xushi-control-padding'   => '0.5rem 0.75rem',
             '--xushi-shadow'            => '0 1px 6px oklch(0% 0 0 / 0.06)',
         ],
+    ];
+
+    /**
+     * Derived tokens, emitted once in the critical <style> as :root declarations.
+     * They follow the active theme with no JS. Bridge tokens keep older component
+     * markup working while components migrate to the canonical names; delete a
+     * bridge once nothing references it.
+     */
+    public static array $derived = [
+        '--xushi-color-base-100'           => 'var(--xushi-color-base-foreground)',
+        '--xushi-color-base-200'           => 'var(--xushi-color-base-neutral)',
+        '--xushi-color-base-300'           => 'color-mix(in oklch, var(--xushi-color-base-neutral) 85%, var(--xushi-color-base-content))',
+        '--xushi-color-base-border'        => 'color-mix(in oklch, var(--xushi-color-base-content) 14%, var(--xushi-color-base-foreground))',
+        '--xushi-color-base-content-muted' => 'var(--xushi-color-base-content-subtle)',
+        '--xushi-color-accent'             => 'var(--xushi-color-secondary)',
+        '--xushi-color-accent-content'     => 'var(--xushi-color-secondary-content)',
+        '--xushi-color-sidebar-content'    => 'var(--xushi-color-base-content-subtle)',
+        '--xushi-custom-sidebar-content'   => 'var(--xushi-color-base-content-subtle)',
+        '--xushi-custom-layout-shadow'     => 'var(--xushi-shadow)',
     ];
 }

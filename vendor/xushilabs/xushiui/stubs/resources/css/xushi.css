@@ -11,8 +11,8 @@
 
 :root {
     --xushi-color-white: oklch(100% 0.00011 271.152);
-    --xushi-radius-box: 10px;
-    --xushi-radius-field: 10px;
+    --xushi-radius-box: var(--xushi-container-radius, 10px);
+    --xushi-radius-field: var(--xushi-control-radius, 10px);
     --xushi-radius-selector: 4px;
     --xushi-border-box: 1px;
     --xushi-border-field: 1px;
@@ -343,13 +343,13 @@ html, body {
 }
 
 *::-webkit-scrollbar-thumb {
-    background: var(--xushi-color-base-border);
+    background: var(--xushi-color-base-neutral);
     border-radius: 9999px;
     transition: background 150ms ease;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-    background: var(--xushi-color-base-content-muted);
+    background: var(--xushi-color-base-neutral);
 }
 
 *::-webkit-scrollbar-corner {
