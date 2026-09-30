@@ -34,6 +34,22 @@ class XushiTagCompiler extends ComponentTagCompiler
         return $compiled;
     }
 
+    /**
+     * Resolve the component name to a view, checking aliases first.
+     */
+    protected function resolveComponentView(string $name): string
+    {
+        // Check if we have a registered alias (e.g., xushi-main)
+        $alias = 'xushi-' . $name;
+        
+        if (isset($this->aliases[$alias])) {
+            return $this->aliases[$alias];
+        }
+
+        // Fall back to flat namespace
+        return 'xushi::' . $name;
+    }
+
     protected function compileOpeningTags(string $value): string
     {
         $pattern = "/
@@ -79,7 +95,7 @@ class XushiTagCompiler extends ComponentTagCompiler
 
         return preg_replace_callback($pattern, function (array $matches) {
             $this->boundAttributes = [];
-            $component = 'xushi::' . $this->extractComponentName($matches[0]);
+            $component = $this->resolveComponentView($this->extractComponentName($matches[0]));
             $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
 
             return $this->componentString($component, $attributes);
@@ -132,18 +148,19 @@ class XushiTagCompiler extends ComponentTagCompiler
         return preg_replace_callback($pattern, function (array $matches) {
             $this->boundAttributes = [];
             $attributes = $this->getAttributesFromAttributeString($matches['attributes']);
+            $component = $this->resolveComponentView($matches[1]);
 
             if (isset($attributes['slot'])) {
                 $slot = $attributes['slot'];
                 unset($attributes['slot']);
 
                 return '@slot(' . $slot . ') '
-                    . $this->componentString('xushi::' . $matches[1], $attributes)
+                    . $this->componentString($component, $attributes)
                     . "\n@endComponentClass##END-COMPONENT-CLASS##"
                     . ' @endslot';
             }
 
-            return $this->componentString('xushi::' . $matches[1], $attributes)
+            return $this->componentString($component, $attributes)
                 . "\n@endComponentClass##END-COMPONENT-CLASS##";
         }, $value);
     }

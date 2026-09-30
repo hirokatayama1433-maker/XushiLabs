@@ -29,17 +29,34 @@ class XushiServiceProvider extends ServiceProvider
     }
 
     protected function bootComponents(): void
-    {
-        $packageViewPath = __DIR__ . '/../stubs/resources/views/components/xushi';
+        {
+            $packageViewPath = __DIR__ . '/../stubs/resources/views/components/xushi';
 
-        $this->loadViewsFrom($packageViewPath, 'xushi');
+            $this->loadViewsFrom($packageViewPath, 'xushi');
 
-        if (function_exists('resource_path') && file_exists(resource_path('views/components/xushi'))) {
-            Blade::anonymousComponentPath(resource_path('views/components/xushi'), 'xushi');
+            if (function_exists('resource_path') && file_exists(resource_path('views/components/xushi'))) {
+                Blade::anonymousComponentPath(resource_path('views/components/xushi'), 'xushi');
+            }
+
+            Blade::anonymousComponentPath($packageViewPath, 'xushi');
+
+            $this->registerNestedComponents($packageViewPath, $packageViewPath);
         }
 
-        Blade::anonymousComponentPath($packageViewPath, 'xushi');
-    }
+        protected function registerNestedComponents(string $basePath, string $currentPath): void
+        {
+            foreach (glob($currentPath . '/*', GLOB_ONLYDIR) as $dir) {
+                foreach (glob($dir . '/*.blade.php') as $file) {
+                    $name = basename($file, '.blade.php');
+                    $relativePath = substr($file, strlen($basePath) + 1, -strlen('.blade.php'));
+                    $relativePath = str_replace(DIRECTORY_SEPARATOR, '.', $relativePath);
+
+                    Blade::component("xushi::$relativePath", "xushi-$name");
+                }
+
+                $this->registerNestedComponents($basePath, $dir);
+            }
+        }
 
     protected function bootTagCompiler(): void
     {

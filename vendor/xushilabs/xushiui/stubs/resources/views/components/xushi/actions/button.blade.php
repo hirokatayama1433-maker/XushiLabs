@@ -18,13 +18,13 @@
 ])
 
 @php
-    $sizeStyles = match($size) {
-        'xs' => ['height' => '1.5rem', 'width' => 'min-content', 'font-size' => '0.75rem', 'padding' => '0 0.5rem', 'border-radius' => 'var(--xushi-radius-selector)'],
-        'sm' => ['height' => '2rem', 'width' => 'min-content', 'font-size' => '0.875rem', 'padding' => '0 0.75rem', 'border-radius' => 'var(--xushi-radius-field)'],
-        'md' => ['height' => '2.5rem', 'width' => 'min-content', 'font-size' => '0.875rem', 'padding' => '0 1rem', 'border-radius' => 'var(--xushi-radius-field)'],
-        'lg' => ['height' => '3rem', 'width' => 'min-content', 'font-size' => '1rem', 'padding' => '0 1.25rem', 'border-radius' => 'var(--xushi-radius-field)'],
-        'xl' => ['height' => '3.5rem', 'width' => 'min-content', 'font-size' => '1.125rem', 'padding' => '0 1.5rem', 'border-radius' => 'var(--xushi-radius-box)'],
-        default => ['height' => '2.5rem', 'width' => 'min-content', 'font-size' => '0.875rem', 'padding' => '0 1rem', 'border-radius' => 'var(--xushi-radius-field)'],
+        $sizeStyles = match($size) {
+        'xs' => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '0.75rem', 'padding' => '6px 12px', 'border-radius' => 'var(--xushi-radius-selector)'],
+        'sm' => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '0.8125rem', 'padding' => '8px 16px', 'border-radius' => 'var(--xushi-radius-field)'],
+        'md' => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '0.875rem', 'padding' => '10px 20px', 'border-radius' => 'var(--xushi-radius-field)'],
+        'lg' => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '1rem', 'padding' => '12px 24px', 'border-radius' => 'var(--xushi-radius-field)'],
+        'xl' => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '1.125rem', 'padding' => '14px 28px', 'border-radius' => 'var(--xushi-radius-box)'],
+        default => ['height' => 'min-content', 'width' => 'min-content', 'font-size' => '0.875rem', 'padding' => '10px 20px', 'border-radius' => 'var(--xushi-radius-field)'],
     };
 
     $variantStyles = [
