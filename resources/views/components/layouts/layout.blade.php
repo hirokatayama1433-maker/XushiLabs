@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-xushi-theme="xushitheme-neutral-neutral-dark-sharp"
+<html data-xushi-theme="xushitheme-neutral-blue-light-default"
       lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">

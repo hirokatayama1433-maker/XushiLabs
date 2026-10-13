@@ -9,22 +9,20 @@
 
     {{-- Group with no label --}}
     <xushi:sidebar-nav>
-    <xushi:sidebar-navitem name="Dashboard" icon="layout-dashboard" href="/dashboard" :active="true"  />
-        <xushi:sidebar-navitem name="Inbox"     icon="inbox"            href="/inbox" badge="+79" />
-        <xushi:sidebar-navitem name="Academics" icon="graduation-cap"   href="/test"   />
-        <xushi:sidebar-navitem name="Finance"   icon="wallet"           href="/finance"   />
+    <xushi:sidebar-navitem name="Home" icon="layout-dashboard" href="/dashboard" :active="true"  />
     </xushi:sidebar-nav>
 
-
-    {{-- Group with label (replaces sidebar-label + bare navitems) --}}
-    <xushi:sidebar-nav label="Services">
-        <xushi:sidebar-navitem name="School Resources"  icon="school"     href="/rules34rd24" />
-        <xushi:sidebar-navtree name="MIS services" icon="server-cog" >
-            <xushi:sidebar-navitem icon="rss" name="Wifi Internet Access" href="/user-card3d23f" :active="true"/>
-            <xushi:sidebar-navitem icon="book-open" name="Ilearn Access (LMS)" href="/rules34rd24" />
-            <xushi:sidebar-navitem icon="mail" name="Gmail Activation" href="/billnmdo1923" />
+    <xushi:sidebar-nav label="Xushi UI">
+        <xushi:sidebar-navitem name="Installation"  icon="school"     href="/rules34rd24" />
+        <xushi:sidebar-navtree name="Components" icon="shapes" >
+            <xushi:sidebar-navitem  name="Actions" icon="mouse-pointer-click"   href="/ui-components/actions" :active="true"/>
+            <xushi:sidebar-navitem  name="Content" icon="file-text"             href="/ui-components/content" />
+            <xushi:sidebar-navitem  name="Forms"   icon="form"                  href="/ui-components/forms" />
+            <xushi:sidebar-navitem  name="Data"    icon="database"              href="/ui-components/data" />
+            <xushi:sidebar-navitem  name="Feedback" icon="message-circle"       href="/ui-components/feedback" />
+            <xushi:sidebar-navitem  name="Navigation" icon="navigation"         href="/ui-components/navigation" />
+            <xushi:sidebar-navitem  name="Overlay" icon="layers"                 href="/ui-components/overlay" />
         </xushi:sidebar-navtree>
-        <xushi:sidebar-navitem name="Campus Leave"  icon="briefcase-business"     href="/rules34rd24" />
 
     </xushi:sidebar-nav>
 

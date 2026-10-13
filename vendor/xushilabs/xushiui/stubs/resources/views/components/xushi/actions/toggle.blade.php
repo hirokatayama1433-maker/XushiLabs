@@ -17,10 +17,10 @@
 
     $accent = $colors[$color] ?? $colors['primary'];
     $trackInactiveBg = $variant === 'soft'
-        ? 'color-mix(in oklch, ' . $accent . ' 80%, var(--xushi-color-base-300))'
-        : 'var(--xushi-color-base-muted)';
+        ? 'color-mix(in oklch, ' . $accent . ' 80%, var(--xushi-color-primary))'
+        : 'var(--xushi-color-base-neutral)';
     $trackActiveBg = $variant === 'soft'
-        ? 'color-mix(in oklch, ' . $accent . ' 25%, var(--xushi-color-base-100))'
+        ? 'color-mix(in oklch, ' . $accent . ' 25%, var(--xushi-color-primary))'
         : $accent;
 
     $trackStyle = collect([

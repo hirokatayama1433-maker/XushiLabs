@@ -1,6 +1,6 @@
 @props([
     'variant'      => 'solid',
-    'color'        => 'primary',
+    'color'        => 'base',
     'size'         => 'md',
     'href'         => null,
     'icon'         => null,
