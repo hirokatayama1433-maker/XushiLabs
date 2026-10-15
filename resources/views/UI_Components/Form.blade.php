@@ -9,13 +9,13 @@
     padding: 10px;
     border-radius: 10px;
 ">
-    <xushi:forms.autocomplete
+    <xushi:autocomplete
         name="framework"
         placeholder="Search framework..."
         :options="['Laravel', 'Livewire', 'Inertia', 'Filament', 'Volt']"
     />
 
-    <xushi:forms.autocomplete
+    <xushi:autocomplete
         name="country"
         placeholder="Search country..."
         variant="soft"
@@ -28,7 +28,7 @@
         ]"
     />
 
-    <xushi:forms.autocomplete
+    <xushi:autocomplete
         name="disabled_field"
         placeholder="Disabled autocomplete"
         :disabled="true"
@@ -47,16 +47,15 @@
     border-radius: 10px;
 ">
     {{-- Single date --}}
-    <xushi:forms.calendar name="date_single" mode="single" />
+    <xushi:calendar name="date_single" mode="single" />
 
     {{-- Range mode --}}
-    <xushi:forms.calendar name="date_range" mode="range" />
+    <xushi:calendar name="date_range" mode="range" />
 
     {{-- Multiple mode with week numbers --}}
-    <xushi:forms.calendar
+    <xushi:calendar
         name="date_multi"
         mode="multiple"
-        :weeknumbers="true"
         :showtoday="true"
     />
 </div>
@@ -82,22 +81,32 @@
 
 {{-- Color Picker --}}
 <h2>Color Picker</h2>
-<div style="
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    border: 1px solid #faf8f8;
-    padding: 10px;
-    border-radius: 10px;
-">
-    {{-- Popover mode (default) --}}
-    <xushi:forms.color-picker name="brand_color" value="#6366f1" format="hex" mode="popover" />
+<div style="display:flex;flex-wrap:wrap;gap:10px;border:1px solid #faf8f8;padding:10px;border-radius:10px;">
 
-    {{-- With alpha channel --}}
-    <xushi:forms.color-picker name="overlay_color" value="#6366f1" format="hex" :alpha="true" mode="popover" />
+    <xushi:color-picker
+        name="brand_color"
+        value="#6366f1"
+        format="hex"
+        mode="popover"
+        :swatches="['#6366f1','#8b5cf6','#ec4899','#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#0ea5e9','#64748b','#1e293b']"
+    />
 
-    {{-- Inline (embedded) --}}
-    <xushi:forms.color-picker name="bg_color" value="#22c55e" format="hex" mode="inline" />
+    <xushi:color-picker
+        name="overlay_color"
+        value="#6366f1"
+        format="hex"
+        :alpha="true"
+        mode="popover"
+        :swatches="['#6366f1','#8b5cf6','#ec4899','#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#0ea5e9','#64748b','#1e293b']"
+    />
+
+    <xushi:color-picker
+        name="bg_color"
+        value="#22c55e"
+        format="hex"
+        mode="inline"
+        :swatches="['#6366f1','#8b5cf6','#ec4899','#ef4444','#f97316','#eab308','#22c55e','#14b8a6','#3b82f6','#0ea5e9','#64748b','#1e293b']"
+    />
 </div>
 
 {{-- Date Picker --}}

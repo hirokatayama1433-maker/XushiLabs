@@ -4,7 +4,7 @@
     'name' => 'color',
     'format' => 'hex',
     'alpha' => false,
-    'swatches' => [],
+    'swatches' => null,
     'closeButton' => null,
     'clearButton' => null,
     'mode' => 'popover',
@@ -25,7 +25,7 @@ $isClose        = $closeButton ?? false;
 $compName       = $name ?? 'color';
 $compTheme      = $theme ?? 'light';
 $compFormat     = strtolower($format ?? 'hex');
-$defaultSwatches  = $defaultSwatches ?? $swatches ?? [];
+$defaultSwatches  = !empty($defaultSwatches) ? $defaultSwatches : ($swatches ?? []);
 $expandedSwatches = $expandedSwatches ?? [];
 @endphp
 

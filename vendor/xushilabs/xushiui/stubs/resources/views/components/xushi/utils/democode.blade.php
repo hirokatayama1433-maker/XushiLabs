@@ -9,18 +9,33 @@
     margin-bottom: 0;
 ">
     {{-- Live preview --}}
-    <div style="
-        padding: 2rem 1.5rem;
-        background: var(--xushi-color-base-100);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.75rem;
-        min-height: 80px;
-    ">
-        {{ $slot }}
-    </div>
+    @if(isset($preview))
+        <div style="
+            padding: 2rem 1.5rem;
+            background: var(--xushi-color-base-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            min-height: 80px;
+        ">
+            {{ $preview }}
+        </div>
+    @elseif($slot->isNotEmpty())
+        <div style="
+            padding: 2rem 1.5rem;
+            background: var(--xushi-color-base-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            min-height: 80px;
+        ">
+            {{ $slot }}
+        </div>
+    @endif
 
     {{-- Code block --}}
     @isset($code)
@@ -37,7 +52,6 @@
             "
         >
             <pre
-                x-ref="codeblock"
                 style="
                     margin: 0;
                     padding: 1.1rem 3rem 1.1rem 1.25rem;
@@ -52,7 +66,7 @@
 
             <button
                 x-on:click="
-                    navigator.clipboard.writeText($refs.codeblock.innerText);
+                    navigator.clipboard.writeText({{ json_encode($codeContent) }});
                     copied = true;
                     setTimeout(() => copied = false, 1800);
                 "

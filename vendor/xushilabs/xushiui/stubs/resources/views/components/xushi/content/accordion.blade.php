@@ -1,3 +1,4 @@
+{{-- accordion --}}
 @props([
     'multiple' => false,
     'variant'  => 'default',
@@ -24,9 +25,9 @@
 @once
 <style>
     /* ── Accordion ── */
-    .xushi-accordion-item:first-child {
+    /* .xushi-accordion-item:first-child {
         border-top: none !important;
-    }
+    } */
 
     .xushi-accordion--separated > .xushi-accordion-item {
         border: 1px solid var(--xushi-color-base-border) !important;
@@ -34,9 +35,9 @@
         overflow: hidden !important;
     }
 
-    .xushi-accordion--separated .xushi-accordion-item {
+    /* .xushi-accordion--separated .xushi-accordion-item {
         border-top: none !important;
-    }
+    } */
 
     .xushi-accordion-trigger:focus-visible {
         outline: 2px solid var(--xushi-color-primary);

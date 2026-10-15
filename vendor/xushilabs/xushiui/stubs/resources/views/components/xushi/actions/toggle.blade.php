@@ -1,21 +1,32 @@
 @props([
     'variant' => 'solid',
-    'color' => 'primary',
+    'color'   => 'primary',
+    'size'    => 'md',
     'checked' => false,
     'disabled' => false,
 ])
 
 @php
     $colors = [
-        'primary' => 'var(--xushi-color-primary)',
+        'primary'   => 'var(--xushi-color-primary)',
         'secondary' => 'var(--xushi-color-secondary)',
-        'success' => 'var(--xushi-color-success)',
-        'danger' => 'var(--xushi-color-danger)',
-        'warning' => 'var(--xushi-color-warning)',
-        'info' => 'var(--xushi-color-info)',
+        'success'   => 'var(--xushi-color-success)',
+        'danger'    => 'var(--xushi-color-danger)',
+        'warning'   => 'var(--xushi-color-warning)',
+        'info'      => 'var(--xushi-color-info)',
     ];
 
+    $sizes = [
+            'xs' => ['track-w' => '28px', 'track-h' => '16px', 'thumb' => '12px', 'offset' => '2px'],
+            'sm' => ['track-w' => '36px', 'track-h' => '20px', 'thumb' => '14px', 'offset' => '3px'],
+            'md' => ['track-w' => '44px', 'track-h' => '24px', 'thumb' => '18px', 'offset' => '3px'],
+            'lg' => ['track-w' => '56px', 'track-h' => '30px', 'thumb' => '24px', 'offset' => '3px'],
+            'xl' => ['track-w' => '68px', 'track-h' => '36px', 'thumb' => '30px', 'offset' => '3px'],
+        ];
+
+    $sz     = $sizes[$size] ?? $sizes['md'];
     $accent = $colors[$color] ?? $colors['primary'];
+
     $trackInactiveBg = $variant === 'soft'
         ? 'color-mix(in oklch, ' . $accent . ' 80%, var(--xushi-color-primary))'
         : 'var(--xushi-color-base-neutral)';
@@ -23,29 +34,32 @@
         ? 'color-mix(in oklch, ' . $accent . ' 25%, var(--xushi-color-primary))'
         : $accent;
 
+    $travelPx = (int) $sz['track-w'] - (int) $sz['thumb'] - 2 * (int) $sz['offset'];
+
     $trackStyle = collect([
-        'display' => 'inline-flex',
-        'align-items' => 'center',
-        'width' => '44px',
-        'height' => '24px',
-        'border-radius' => '999px',
-        'position' => 'relative',
-        'cursor' => $disabled ? 'not-allowed' : 'pointer',
-        'opacity' => $disabled ? '0.5' : '1',
-        'transition' => 'background 200ms ease',
-        'background' => $checked ? $trackActiveBg : $trackInactiveBg,
-        'box-sizing' => 'border-box',
+        '--xushi-toggle-travel'   => $travelPx . 'px',
+        'display'                 => 'inline-flex',
+        'align-items'             => 'center',
+        'width'                   => $sz['track-w'],
+        'height'                  => $sz['track-h'],
+        'border-radius'           => '999px',
+        'position'                => 'relative',
+        'cursor'                  => $disabled ? 'not-allowed' : 'pointer',
+        'opacity'                 => $disabled ? '0.5' : '1',
+        'transition'              => 'background 200ms ease',
+        'background'              => $checked ? $trackActiveBg : $trackInactiveBg,
+        'box-sizing'              => 'border-box',
     ])->map(fn($value, $key) => "$key: $value")->implode('; ');
 
     $thumbStyle = collect([
-        'position' => 'absolute',
-        'top' => '3px',
-        'left' => '3px',
-        'width' => '18px',
-        'height' => '18px',
-        'border-radius' => '999px',
-        'background' => '#ffffff',
-        'transition' => 'transform 180ms var(--ease-out-smooth)',
+        'position'       => 'absolute',
+        'top'            => $sz['offset'],
+        'left'           => $sz['offset'],
+        'width'          => $sz['thumb'],
+        'height'         => $sz['thumb'],
+        'border-radius'  => '999px',
+        'background'     => '#ffffff',
+        'transition'     => 'transform 180ms var(--ease-out-smooth)',
         'pointer-events' => 'none',
     ])->map(fn($value, $key) => "$key: $value")->implode('; ');
 @endphp
